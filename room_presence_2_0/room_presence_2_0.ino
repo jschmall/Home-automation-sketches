@@ -45,6 +45,7 @@ void loop()
 {
   atmosphere();        // Run the atmosphere function to get the condition of the room
   presence();          // Run the presence funtion to get status of occupancy
+  delay(500);          // Delay loop to account for slow sensors
 }
 
 // Callback Function for PubSubClient
