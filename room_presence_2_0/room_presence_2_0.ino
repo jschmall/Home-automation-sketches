@@ -11,9 +11,8 @@
 #define echoPin 5           // Sonar Echo Pin.  Sound in
 
 // Integers
-int calibrationTime = 30;   // PIR Calibration time
 int pirPin = 3;             // PIR Data Pin
-int LDR_Pin = A0;            // Sonar Analog Pin
+int LDR_Pin = A0;           // Photocell Analog Pin
 
 // Variables
 byte mac[]    = { 0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };      // MAC address for Ethernet Shield
@@ -22,8 +21,8 @@ byte ip[]     = { 10, 0, 1, 75 };                            // Static IP for Et
 
 DHT dht(DHTPIN, DHTTYPE);                                    // Define DHT values
 
-EthernetClient ethClient;                                    //Ethernet Object for MQTT
-PubSubClient client(server, 1883, callback, ethClient);      // MQTT Client Instance clientname( Server,Port,Callback,Client)
+EthernetClient ethClient;                                    // Ethernet Object for MQTT
+PubSubClient client(server, 1883, callback, ethClient);      // MQTT Client Instance clientname (Server,Port,Callback,Client)
 
 // Setup Function
 
@@ -36,7 +35,6 @@ void setup()
   Ethernet.begin(mac, ip);             // Initialize Ethernet connection
   dht.begin();                         // Initialize DHT sensor
   client.connect("bedroom1Client");    // Connect to MQTT broker as "bedroom1Client"
-  delay(calibrationTime);              // Delay for PIR calibration
 }
 
 // Loop function
@@ -91,11 +89,11 @@ void presence()
   // Photocell Module
   
   int LDRReading = analogRead(LDR_Pin);                         // Define LDRReading integer as reading LDR_Pin
-  String stringL;                                               // Create a string
-  stringL += LDRReading;                                        // Give the string the value of int LDRReading
-  char l[1024];                                                 // Create char l with 1024 positions
-  stringL.toCharArray(l, 1024);                                 // Convert the string value to a char array
-  client.publish("inside/bedroom1/light", l);                   // Publish to "inside/bedroom1/light" with value of l
+  String str;                                                   // Create String "str"
+  char light[4];                                                // Create character array "light" with 4 positions
+  str = String(LDRReading);                                     // Give the string the value of int LDRReading
+  str.toCharArray(light, 4);                                    // Convert the string to char array
+  client.publish("inside/bedroom1/light", light);               // Publish to "inside/bedroom1/light" with value of light
   
   // PIR Module
   
