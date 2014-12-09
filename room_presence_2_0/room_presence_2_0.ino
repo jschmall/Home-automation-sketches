@@ -48,6 +48,7 @@ void setup()
   client.connect("bedroom1Client");    // Connect to MQTT broker as "bedroom1Client"
   Udp.begin(localPort);                // Initialize UDP session
   setSyncProvider(getNtpTime);         //
+  Serial.begin(9600);
 }
 
 // Loop function
@@ -105,13 +106,13 @@ void presence()
   if((hour()) >= 17 && (LDRReading <= 300)){                    // If the hour is greater than or equal to 17 and LDRReading is less than or equal to 300
     client.publish("inside/bedroom1/light", "Light Off");       // then publish to "inside/bedroom1/light" as "Light Off"
   }
-  else if((hour()) >= 7 && (LDRReading <= 300)){                // If the hour is greater than or equal to 7 and LDRReading is less than or equal to 300
+  else if((hour()) >= 7 && (LDRReading <= 500)){                // If the hour is greater than or equal to 7 and LDRReading is less than or equal to 300
     client.publish("inside/bedroom1/light", "Light Off");       // then publish to "inside/bedroom1/light" as "Light Off"
   }
   else if((hour()) >= 17 && (LDRReading > 300)){                // If the hour is greater than or equal to 17 and LDRReading is greater than 300
     client.publish("inside/bedroom1/light", "Light On");        // then publish to "inside/bedroom1/light" as "Light On"
   }
-  else if((hour()) > 7 && (LDRReading > 300)) {                 // If the hour is greater than or equal to 7 and LDRReading is greater than 300
+  else if((hour()) > 7 && (LDRReading > 500)) {                 // If the hour is greater than or equal to 7 and LDRReading is greater than 300
     client.publish("inside/bedroom1/light", "Light On");        // then publish to "inside/bedroom1/light" as "Light On"
   }
   
@@ -123,6 +124,7 @@ void presence()
    else {                                                       // Otherwise
    client.publish("inside/bedroom1/motion", "No Motion");       // publish to "inside/bedroom1/motion" as "No Motion"
    }
+   Serial.println(LDRReading);
 }
 
 
