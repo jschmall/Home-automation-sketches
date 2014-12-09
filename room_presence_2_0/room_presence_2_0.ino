@@ -13,7 +13,6 @@
 #define echoPin 5           // Sonar Echo Pin.  Sound in
 
 // Integers
-<<<<<<< HEAD
 int pirPin = 3;                 // PIR Data Pin
 int LDR_Pin = A5;               // Photocell Analog Pin
 unsigned int localPort = 8888;  // local port to listen for UDP packets
@@ -22,10 +21,6 @@ const int timeZone = -8;        // Central European Time
 //const int timeZone = -4;      // Eastern Daylight Time (USA)
 //const int timeZone = -8;      // Pacific Standard Time (USA)
 //const int timeZone = -7;      // Pacific Daylight Time (USA)
-=======
-int pirPin = 3;             // PIR Data Pin
-int LDR_Pin = A5;           // Photocell Analog Pin
->>>>>>> FETCH_HEAD
 
 // Variables
 byte mac[]    = { 0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };      // MAC address for Ethernet Shield
