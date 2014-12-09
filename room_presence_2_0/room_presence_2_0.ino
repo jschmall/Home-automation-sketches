@@ -12,7 +12,7 @@
 
 // Integers
 int pirPin = 3;             // PIR Data Pin
-int LDR_Pin = A0;           // Photocell Analog Pin
+int LDR_Pin = A5;           // Photocell Analog Pin
 
 // Variables
 byte mac[]    = { 0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };      // MAC address for Ethernet Shield
