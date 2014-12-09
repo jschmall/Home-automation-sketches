@@ -106,13 +106,13 @@ void presence()
   if((hour()) >= 17 && (LDRReading <= 300)){                    // If the hour is greater than or equal to 17 and LDRReading is less than or equal to 300
     client.publish("inside/bedroom1/light", "Light Off");       // then publish to "inside/bedroom1/light" as "Light Off"
   }
-  else if((hour()) >= 7 && (LDRReading <= 500)){                // If the hour is greater than or equal to 7 and LDRReading is less than or equal to 300
+  else if((hour()) >= 7 && (LDRReading <= 700)){                // If the hour is greater than or equal to 7 and LDRReading is less than or equal to 300
     client.publish("inside/bedroom1/light", "Light Off");       // then publish to "inside/bedroom1/light" as "Light Off"
   }
   else if((hour()) >= 17 && (LDRReading > 300)){                // If the hour is greater than or equal to 17 and LDRReading is greater than 300
     client.publish("inside/bedroom1/light", "Light On");        // then publish to "inside/bedroom1/light" as "Light On"
   }
-  else if((hour()) > 7 && (LDRReading > 500)) {                 // If the hour is greater than or equal to 7 and LDRReading is greater than 300
+  else if((hour()) > 7 && (LDRReading > 700)) {                 // If the hour is greater than or equal to 7 and LDRReading is greater than 300
     client.publish("inside/bedroom1/light", "Light On");        // then publish to "inside/bedroom1/light" as "Light On"
   }
   
