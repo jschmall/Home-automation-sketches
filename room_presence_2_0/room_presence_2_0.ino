@@ -43,7 +43,7 @@ void setup()
   pinMode(echoPin, INPUT);
   pinMode(pirPin, INPUT);
   digitalWrite(pirPin, LOW);
-  Ethernet.begin(mac, ip);             // Initialize Ethernet connection
+  Ethernet.begin(mac);                 // Initialize Ethernet connection using DHCP
   dht.begin();                         // Initialize DHT sensor
   client.connect("bedroom1Client");    // Connect to MQTT broker as "bedroom1Client"
   Udp.begin(localPort);                // Initialize UDP session
