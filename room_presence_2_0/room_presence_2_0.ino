@@ -13,6 +13,12 @@
 #define echoPin 5           // Sonar Echo Pin.  Sound in
 
 // Integers
+long unsigned int lowIn;         
+long unsigned int pause = 5000;  // The amount of milliseconds the sensor has to be low before we assume all motion has stopped
+boolean lockLow = true;
+boolean takeLowTime;
+long previousMillis = 0;        // Defining previousMillis for millis() loop
+long interval = 2500;           // Time to wait before next DHT read
 int pirPin = 3;                 // PIR Data Pin
 int LDR_Pin = A5;               // Photocell Analog Pin
 unsigned int localPort = 8888;  // local port to listen for UDP packets
@@ -48,7 +54,6 @@ void setup()
   client.connect("bedroom1Client");    // Connect to MQTT broker as "bedroom1Client"
   Udp.begin(localPort);                // Initialize UDP session
   setSyncProvider(getNtpTime);         //
-  Serial.begin(9600);
 }
 
 // Loop function
@@ -57,7 +62,7 @@ void loop()
 {
   atmosphere();        // Run the atmosphere function to get the condition of the room
   presence();          // Run the presence funtion to get status of occupancy
-  delay(500);          // Delay loop to account for slow sensors
+  delay(500);
 }
 
 // Callback Function for PubSubClient
@@ -69,14 +74,18 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 void atmosphere()
 {
-  float f = dht.readTemperature(true);                      // Read the temperature value in Farenheit and store as a floating value
-  float h = dht.readHumidity();                             // Read the humidiry value and store as a floating value
-  char stringTF[10];                                        // Create char array variable to hold the temp value with 10 positions
-  dtostrf(f, 3, 1, stringTF);                               // Convert floating temp value to a string with 3 values, 2 before the decimal and 1 after
-  char stringH[10];                                         // Create char array variable to hold the humidity value with 10 positions
-  dtostrf(h, 3, 1, stringH);                                // Convert floating humidity value to a string with 3 valuse, 2 before the decimal and 1 after
-  client.publish("inside/bedroom1/temp", stringTF);         // Publish the temp string to the MQTT broker under "inside/bedroom1/temp"
-  client.publish("inside/bedroom1/humidity", stringH);      // Publish the humidity string to the MQTT broker under "inside/bedroom1/humidity"
+  unsigned long currentMillis = millis();                     // Define currentMillis as millis() function
+  if(currentMillis - previousMillis > interval) {             // If currentMillis minus previousMillis is greater than the intetval value
+    previousMillis = currentMillis;                           // then previousMillis is equal to currentMillis
+    float f = dht.readTemperature(true);                      // Read the temperature value in Farenheit and store as a floating value
+    float h = dht.readHumidity();                             // Read the humidiry value and store as a floating value
+    char stringTF[10];                                        // Create char array variable to hold the temp value with 10 positions
+    dtostrf(f, 3, 1, stringTF);                               // Convert floating temp value to a string with 3 values, 2 before the decimal and 1 after
+    char stringH[10];                                         // Create char array variable to hold the humidity value with 10 positions
+    dtostrf(h, 3, 1, stringH);                                // Convert floating humidity value to a string with 3 valuse, 2 before the decimal and 1 after
+    client.publish("inside/bedroom1/temp", stringTF);         // Publish the temp string to the MQTT broker under "inside/bedroom1/temp"
+    client.publish("inside/bedroom1/humidity", stringH);      // Publish the humidity string to the MQTT broker under "inside/bedroom1/humidity"
+  }
 }
 
 // Presence Function
@@ -102,29 +111,33 @@ void presence()
   }
   
   // Photocell/Time Detection Module
-  int LDRReading = analogRead(LDR_Pin);                         // Define LDRReading integer as reading LDR_Pin
-  if((hour()) >= 17 && (LDRReading <= 300)){                    // If the hour is greater than or equal to 17 and LDRReading is less than or equal to 300
-    client.publish("inside/bedroom1/light", "Light Off");       // then publish to "inside/bedroom1/light" as "Light Off"
-  }
-  else if((hour()) >= 7 && (LDRReading <= 700)){                // If the hour is greater than or equal to 7 and LDRReading is less than or equal to 300
-    client.publish("inside/bedroom1/light", "Light Off");       // then publish to "inside/bedroom1/light" as "Light Off"
-  }
-  else if((hour()) >= 17 && (LDRReading > 300)){                // If the hour is greater than or equal to 17 and LDRReading is greater than 300
-    client.publish("inside/bedroom1/light", "Light On");        // then publish to "inside/bedroom1/light" as "Light On"
-  }
-  else if((hour()) > 7 && (LDRReading > 700)) {                 // If the hour is greater than or equal to 7 and LDRReading is greater than 300
-    client.publish("inside/bedroom1/light", "Light On");        // then publish to "inside/bedroom1/light" as "Light On"
-  }
+  int LDRReading = analogRead(LDR_Pin);              // Define LDRReading integer as reading LDR_Pin
+  char l[4];                                         // If the hour is greater than or equal to 17 and LDRReading is less than or equal to 300
+  String str;
+  str=String(LDRReading);
+  str.toCharArray(l,4);
+  client.publish("inside/bedroom1/light", l);       // then publish to "inside/bedroom1/light" as "Light Off"
   
   // PIR Module
-  if(digitalRead(pirPin) == HIGH){                              // If PIR Pin is high
-     client.publish("inside/bedroom1/motion", "Motion");        // then publish to "inside/bedroom1/motion" as "Motion"
+  // ***************** NEED TO COMMENT ********************* //
+  if(digitalRead(pirPin) == HIGH){ 
+    if(lockLow){                                              
+       lockLow = false;                                       
+       client.publish("inside/bedroom1/motion", "Motion");  
+    }
+       takeLowTime = true;                                    
        }
 
-   else {                                                       // Otherwise
-   client.publish("inside/bedroom1/motion", "No Motion");       // publish to "inside/bedroom1/motion" as "No Motion"
+   if(digitalRead(pirPin) == LOW){       
+       if(takeLowTime){
+        lowIn = millis();                                     
+        takeLowTime = false;                                  
+        }
+       if(!lockLow && millis() - lowIn > pause){              
+           lockLow = true;                                    
+   client.publish("inside/bedroom1/motion", "No Motion");     
    }
-   Serial.println(LDRReading);
+}
 }
 
 
