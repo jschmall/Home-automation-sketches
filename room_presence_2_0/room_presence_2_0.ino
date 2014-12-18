@@ -1,6 +1,13 @@
 // Libraries included
 #include "DHT.h"            // Temp/Humidity Sensor Library
 #include <UIPEthernet.h>    
+// ENC SO -> Arduino pin 12
+// ENC SI -> Arduino pin 11
+// ENC SCK -> Arduino pin 13
+// ENC CS -> Arduino pin 10
+// ENC VCC -> Arduino 3V3 pin
+// ENC GND -> Arduino Gnd pin
+
 #include <PubSubClient.h>   // MQTT Library
 #include <Time.h>           // Time Library
 
