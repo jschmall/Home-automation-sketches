@@ -31,7 +31,7 @@ int LDR_Pin = A5;                     // Photocell Analog Pin
 
 // Variables
 byte mac[]    = { 0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };      // MAC address for Ethernet Shield
-byte server[] = { 10, 0, 1, 100 };                           // Static IP for MQTT server. Change as needed.
+byte server[] = { 10, 0, 1, 5 };                           // Static IP for MQTT server. Change as needed.
 byte ip[]     = { 10, 0, 1, 75 };                            // Static IP for Ethernet Shield. Change as needed.
 
 DHT dht(DHTPIN, DHTTYPE);                                    // Define DHT values
