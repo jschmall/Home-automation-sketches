@@ -31,7 +31,7 @@ int LDR_Pin = A5;                     // Photocell Analog Pin
 
 // Variables
 byte mac[]    = { 0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };      // MAC address for Ethernet Shield
-byte server[] = { 10, 0, 1, 5 };                           // Static IP for MQTT server. Change as needed.
+byte server[] = { 10, 0, 1, 100 };                           // Static IP for MQTT server. Change as needed.
 byte ip[]     = { 10, 0, 1, 75 };                            // Static IP for Ethernet Shield. Change as needed.
 
 DHT dht(DHTPIN, DHTTYPE);                                    // Define DHT values
@@ -107,10 +107,10 @@ void presence()
   Serial.print("Sonar - ");
   Serial.println(distance);
   if (distance < 1100) {                                        // Check distance, if less than given value
-    client.publish("inside/bedroom1/sonar", "Occupied");        // publish to "inside/bedroom1/sonar" as "Occupied"
+    client.publish("inside/bedroom1/sonar", "Object");        // publish to "inside/bedroom1/sonar" as "Occupied"
   }
   else if (distance >= 1100) {                                  // Otherwise, if distance is greater than or equal to given value
-    client.publish("inside/bedroom1/sonar", "Not Occupied");    // publish to "inside/bedroom1/sonar" as "Not Occupied"
+    client.publish("inside/bedroom1/sonar", "No Object");    // publish to "inside/bedroom1/sonar" as "Not Occupied"
   }
   
   // Photocell/Time Detection Module
