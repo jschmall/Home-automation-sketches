@@ -19,13 +19,13 @@
 
 // Integers
 long unsigned int lowIn;         
-long unsigned int pause = 5000;        // The amount of milliseconds the sensor has to be low before we assume all motion has stopped
+long unsigned int pause = 5000;       // The amount of milliseconds the sensor has to be low before we assume all motion has stopped
 boolean lockLow = true;
 boolean takeLowTime;
 long previousMillis = 0;              // Defining previousMillis for millis() loop
 long previousMillis2 = 0;             // Defining previousMillis2 for millis() loop
 long interval = 3000;                 // Time to wait before next DHT read
-long interval2 = 1000;
+long interval2 = 1000;                // Time to wait before next loop
 int pirPin = 3;                       // PIR Data Pin
 int LDR_Pin = A5;                     // Photocell Analog Pin
 
@@ -91,9 +91,9 @@ void atmosphere()
 void presence()
 {
   
-  unsigned long currentMillis2 = millis();                     // Define currentMillis as millis() function
-  if(currentMillis2 - previousMillis2 > interval2) {             // If currentMillis minus previousMillis is greater than the intetval value
-  previousMillis2 = currentMillis2;                           // then previousMillis is equal to currentMillis
+  unsigned long currentMillis2 = millis();                      // Define currentMillis as millis() function
+  if(currentMillis2 - previousMillis2 > interval2) {            // If currentMillis minus previousMillis is greater than the intetval value
+  previousMillis2 = currentMillis2;                             // then previousMillis is equal to currentMillis
   
   // Sonar Module
   long duration, distance;                                      // Long variables for duration and distance
@@ -107,10 +107,10 @@ void presence()
   Serial.print("Sonar - ");
   Serial.println(distance);
   if (distance < 1100) {                                        // Check distance, if less than given value
-    client.publish("inside/bedroom1/sonar", "Object");        // publish to "inside/bedroom1/sonar" as "Occupied"
+    client.publish("inside/bedroom1/sonar", "Object");          // publish to "inside/bedroom1/sonar" as "Occupied"
   }
   else if (distance >= 1100) {                                  // Otherwise, if distance is greater than or equal to given value
-    client.publish("inside/bedroom1/sonar", "No Object");    // publish to "inside/bedroom1/sonar" as "Not Occupied"
+    client.publish("inside/bedroom1/sonar", "No Object");       // publish to "inside/bedroom1/sonar" as "Not Occupied"
   }
   
   // Photocell/Time Detection Module
