@@ -1,6 +1,6 @@
 // Libraries included
 #include "DHT.h"              // Temp/Humidity Sensor Library
-#include <UIPEthernet.h>    // Breakout board for ethernet
+#include <UIPEthernet.h>      // Library for ethernet breakout board
   // ENC SO -> Arduino pin 12
   // ENC SI -> Arduino pin 11
   // ENC SCK -> Arduino pin 13
@@ -26,8 +26,8 @@ long previousMillis = 0;              // Defining previousMillis for millis() lo
 long previousMillis2 = 0;             // Defining previousMillis2 for millis() loop
 long interval = 3000;                 // Time to wait before next DHT read
 long interval2 = 1000;                // Time to wait before next loop
-int pirPin = 3;                       // PIR Data Pin
-int LDR_Pin = A5;                     // Photocell Analog Pin
+byte pirPin = 3;                       // PIR Data Pin
+byte LDR_Pin = A5;                     // Photocell Analog Pin
 
 // Variables
 byte mac[]    = { 0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };      // MAC address for Ethernet Shield
@@ -35,8 +35,6 @@ byte server[] = { 10, 0, 1, 100 };                           // Static IP for MQ
 byte ip[]     = { 10, 0, 1, 75 };                            // Static IP for Ethernet Shield. Change as needed.
 
 DHT dht(DHTPIN, DHTTYPE);                                    // Define DHT values
-
-IPAddress timeServer(10, 0, 1, 1);                           // Assigns the router IP as the Time Server
 
 EthernetClient ethClient;                                    // Ethernet Object for MQTT
 PubSubClient client(server, 1883, callback, ethClient);      // MQTT Client Instance clientname (Server,Port,Callback,Client)
@@ -84,7 +82,7 @@ void atmosphere()
     dtostrf(h, 3, 1, stringH);                                // Convert floating humidity value to a string with 3 valuse, 2 before the decimal and 1 after
     client.publish("inside/bedroom1/temp", stringTF);         // Publish the temp string to the MQTT broker under "inside/bedroom1/temp"
     client.publish("inside/bedroom1/humidity", stringH);      // Publish the humidity string to the MQTT broker under "inside/bedroom1/humidity"
-}
+  }
 }
 
 // Presence Function
