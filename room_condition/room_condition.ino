@@ -45,6 +45,10 @@ byte ip[]     = { 10, 0, 1, 75 };                            // Static IP for Et
 
 DHT dht(DHTPIN, DHTTYPE);                                    // Define DHT values
 
+//Callback Function for PubSubClient
+void callback(char* topic, byte* payload, unsigned int length) {
+}
+
 EthernetClient ethClient;                                    // Ethernet Object for MQTT
 PubSubClient client(server, 1883, callback, ethClient);      // MQTT Client Instance clientname (Server,Port,Callback,Client)
 
@@ -56,10 +60,9 @@ void setup()
   pinMode(echoPin, INPUT);
   pinMode(pirPin, INPUT);
   digitalWrite(pirPin, LOW);
-  Ethernet.begin(mac, ip);             // Initialize Ethernet connection using DHCP
+  Ethernet.begin(mac, ip);                 // Initialize Ethernet connection using DHCP
   dht.begin();                         // Initialize DHT sensor
-  client.connect(Str0);    // Connect to MQTT broker as "bedroom1Client"
-  //Serial.begin(9600);
+  client.connect(Str0);                // Connect to MQTT broker as "bedroom1Client"
 }
 
 // Loop function
@@ -68,16 +71,11 @@ void loop()
 {
   atmosphere();        // Run the atmosphere function to get the condition of the room
   presence();          // Run the presence funtion to get status of occupancy
-  memory();            // Run the memory function
+  memory();          // Run the memory function
   client.loop();       // Keep the MQTT connection alive
 }
 
 // Atmosphere Function
-
-// Callback Function for PubSubClient
-void callback(char* topic, byte* payload, unsigned int length)
-{
-}
 
 void atmosphere()
 {
@@ -86,9 +84,9 @@ void atmosphere()
     previousMillis = currentMillis;                           // then previousMillis is equal to currentMillis
     float f = dht.readTemperature(true);                      // Read the temperature value in Farenheit and store as a floating value
     float h = dht.readHumidity();                             // Read the humidiry value and store as a floating value
-    char sT[5];                                               // Create char array variable to hold the temp value with 10 positions
+    char sT[5];                                               // Create char array variable to hold the temp value with 5 positions
     dtostrf(f, 3, 1, sT);                                     // Convert floating temp value to a string with 3 values, 2 before the decimal and 1 after
-    char sH[5];                                               // Create char array variable to hold the humidity value with 10 positions
+    char sH[5];                                               // Create char array variable to hold the humidity value with 5 positions
     dtostrf(h, 3, 1, sH);                                     // Convert floating humidity value to a string with 3 valuse, 2 before the decimal and 1 after
     client.publish(Str1, sT);                                 // Publish the temp string to the MQTT broker under "inside/bedroom1/temp"
     client.publish(Str2, sH);                                 // Publish the humidity string to the MQTT broker under "inside/bedroom1/humidity"
@@ -113,13 +111,11 @@ void presence()
     digitalWrite(trigPin, LOW);                                   // Write Trigger Pin low
     duration = pulseIn(echoPin, HIGH);                            // Define duration variable
     distance = (duration/2) / 2.9;                                // Define distance variable and calculate distance in mm
-    //Serial.print("Sonar - ");
-    //Serial.println(distance);
-    if (distance < 1100) {                                        // Check distance, if less than given value
-      client.publish(Str3, "1");                                  // publish to "inside/bedroom1/sonar" as "Occupied"
-    }
-    else if (distance >= 1100) {                                  // Otherwise, if distance is greater than or equal to given value
-      client.publish(Str3, "0");                                  // publish to "inside/bedroom1/sonar" as "Not Occupied"
+    char d[5];
+    String dStr;
+    dStr=String(distance);
+    dStr.toCharArray(d,5);
+    client.publish(Str3, d);                                    // publish to "inside/bedroom1/sonar"
     }
 
     // Photocell Module
@@ -129,8 +125,6 @@ void presence()
     lS=String(LDRReading);
     lS.toCharArray(l,4);
     client.publish(Str5, l);       
-    //Serial.print("Light - ");
-    //Serial.println(analogRead(LDR_Pin));
 
     // PIR Module
     // ***************** NEED TO COMMENT ********************* //
@@ -153,9 +147,8 @@ void presence()
       }
     }
   }
-}
-
-void memory()
+  
+  void memory()
 {
   unsigned long currentMillis3 = millis();                      // Define currentMillis as millis() function
   if(currentMillis3 - previousMillis3 > interval2) {            // If currentMillis minus previousMillis is greater than the intetval value
