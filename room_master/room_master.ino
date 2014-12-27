@@ -33,10 +33,10 @@ void setup()
   Serial.begin(9600);
   Ethernet.begin(mac);
   client.connect(Str0);
-  client.subscribe(Str1);
+  //client.subscribe(Str1);
   //client.subscribe(Str2);
-  client.subscribe(Str3);
-  //client.subscribe(Str4);
+  //client.subscribe(Str3);
+  client.subscribe(Str4);
   //client.subscribe(Str5);
 }
 
@@ -55,11 +55,11 @@ void callback(char* topic, byte* payload, unsigned int length)
   }
   message_buff[i] = '\0';
   String msgString = String(message_buff);
-  if(String(topic) == Str1) {
-    digitalWrite(bLed, HIGH);
-  }
-  else(digitalWrite(bLed, LOW));
-  if(String(topic) == Str3) {
+  //if(String(topic) == Str3) {
+  //  digitalWrite(bLed, HIGH);
+  //}
+  //else(digitalWrite(bLed, LOW));
+  if(String(msgString) == "1") {
     digitalWrite(rLed, HIGH);
   }
   else(digitalWrite(rLed, LOW));
