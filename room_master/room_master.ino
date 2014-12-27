@@ -6,9 +6,8 @@ byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xEf };
 byte server[] = { 10, 0, 1, 100 };
 byte ip[]     = { 10, 0, 1, 80 };
 
-int rLed = 4;
-int gLed = 3;
 int bLed = 2;
+int rLed = 3;
 
 char message_buff[1000];
 
@@ -29,17 +28,16 @@ PubSubClient client(server, 1883, callback, ethClient);
 
 void setup()
 {
-  pinMode(rLed,OUTPUT);
-  pinMode(gLed,OUTPUT);
   pinMode(bLed,OUTPUT);
+  pinMode(rLed,OUTPUT);
   Serial.begin(9600);
-  Ethernet.begin(mac, ip);
+  Ethernet.begin(mac);
   client.connect(Str0);
   client.subscribe(Str1);
-  client.subscribe(Str2);
+  //client.subscribe(Str2);
   client.subscribe(Str3);
-  client.subscribe(Str4);
-  client.subscribe(Str5);
+  //client.subscribe(Str4);
+  //client.subscribe(Str5);
 }
 
 void loop()
@@ -57,7 +55,15 @@ void callback(char* topic, byte* payload, unsigned int length)
   }
   message_buff[i] = '\0';
   String msgString = String(message_buff);
-  Serial.print(topic);
+  if(String(topic) == Str1) {
+    digitalWrite(bLed, HIGH);
+  }
+  else(digitalWrite(bLed, LOW));
+  if(String(topic) == Str3) {
+    digitalWrite(rLed, HIGH);
+  }
+  else(digitalWrite(rLed, LOW));
+  Serial.print(String(topic));
   Serial.print(" - ");
   Serial.println(msgString);
 }
