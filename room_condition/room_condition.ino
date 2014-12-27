@@ -36,7 +36,6 @@ char Str2[] = "i/b1/h";                        // Humidity Publish string
 char Str3[] = "i/b1/s";                        // Sonar Publish string
 char Str4[] = "i/b1/m";                        // Motion Publish string
 char Str5[] = "i/b1/l";                        // Light Publish string
-char Str6[] = "i/b1/mem";                      // Memory monitoring
 
 // Variables
 byte mac[]    = { 0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };      // MAC address for Ethernet Shield
@@ -71,7 +70,6 @@ void loop()
 {
   atmosphere();        // Run the atmosphere function to get the condition of the room
   presence();          // Run the presence funtion to get status of occupancy
-  memory();          // Run the memory function
   client.loop();       // Keep the MQTT connection alive
 }
 
@@ -116,7 +114,6 @@ void presence()
     dStr=String(distance);
     dStr.toCharArray(d,5);
     client.publish(Str3, d);                                    // publish to "inside/bedroom1/sonar"
-    }
 
     // Photocell Module
     int LDRReading = analogRead(LDR_Pin);              
@@ -125,7 +122,8 @@ void presence()
     lS=String(LDRReading);
     lS.toCharArray(l,4);
     client.publish(Str5, l);       
-
+  }
+  
     // PIR Module
     // ***************** NEED TO COMMENT ********************* //
     if(digitalRead(pirPin) == HIGH){ 
@@ -147,17 +145,3 @@ void presence()
       }
     }
   }
-  
-  void memory()
-{
-  unsigned long currentMillis3 = millis();                      // Define currentMillis as millis() function
-  if(currentMillis3 - previousMillis3 > interval2) {            // If currentMillis minus previousMillis is greater than the intetval value
-    previousMillis3 = currentMillis3;
-  int fMem = freeMemory();
-  char m[5];                                        
-  String mem;
-  mem=String(fMem);
-  mem.toCharArray(m,5);
-  client.publish(Str6, m);
-  }
-}
